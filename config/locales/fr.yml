@@ -1,0 +1,10 @@
+fr:
+  activerecord:
+    attributes:
+      primary_asset:
+        name: "Nom"
+        description: "Description"
+        av: "D"
+        i: "I"
+        c: "C"
+        au: "A"

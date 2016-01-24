@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @secondary_asset.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @secondary_asset.description %>
+</p>
+
+<%= link_to 'Edit', edit_secondary_asset_path(@secondary_asset) %> |
+<%= link_to 'Back', secondary_assets_path %>

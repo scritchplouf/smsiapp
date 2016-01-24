@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @primary_asset.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @primary_asset.description %>
+</p>
+
+<p>
+  <strong>D:</strong>
+  <%= @primary_asset.d %>
+</p>
+
+<p>
+  <strong>I:</strong>
+  <%= @primary_asset.i %>
+</p>
+
+<p>
+  <strong>C:</strong>
+  <%= @primary_asset.c %>
+</p>
+
+<p>
+  <strong>T:</strong>
+  <%= @primary_asset.t %>
+</p>
+
+<%= link_to 'Edit', edit_primary_asset_path(@primary_asset) %> |
+<%= link_to 'Back', primary_assets_path %>

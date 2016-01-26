@@ -7,4 +7,11 @@ fr:
         av: "D"
         i: "I"
         c: "C"
-        au: "A"
+        au: "T"
+      secondary_asset:
+        name: "Nom"
+        description: "Description"
+        av: "D"
+        i: "I"
+        c: "C"
+        au: "T"

@@ -1,0 +1,199 @@
+var lastsel;
+$(document).ready(function () {
+  var template = "<div style='margin-left:15px;'><div> Name %> :</div><div> {CustomerID} </div>";
+  template += "<div> Company bla Name: </div><div>{CompanyName} </div>";
+  template += "<div> Phone: </div><div>{Phone} </div>";
+  template += "<div> Postal Code: </div><div>{PostalCode} </div>";
+  template += "<div> City:</div><div> {City} </div>";
+  template += "<hr style='width:100%;'/>";
+  template += "<div> {sData} {cData}  </div></div>";
+
+  $("#jqGrid").jqGrid({
+    url: 'secondary_assets',
+    // we set the changes to be made at client side using predefined word clientArray
+    //multiselect: true,
+    onSelectRow: function(id){
+      if(id && id!==lastSel){ 
+	$('#jqGrid').restoreRow(lastSel); 
+	lastSel=id; 
+      }
+      $('#jqGrid').editRow(id, true); 
+    },
+    multikey: "shiftkey",
+    editurl: 'secondary_assets',
+    datatype: "json",
+    colModel: [
+  {
+    name: 'id',
+    hidden: true,
+    key: true,
+    editrules : { required: true}
+  },
+    {
+      label: '<%= SecondaryAsset.human_attribute_name :name %>',
+      name: 'name',
+      width: 75,
+      key: true,
+      editable: true,
+      editrules : { required: true}
+    },
+    {
+      label: '<%= SecondaryAsset.human_attribute_name :description %>',
+      name: 'description',
+      width: 140,
+      editable: true // must set editable to true if you want to make the field editable
+    },
+    {
+      label: '<%= SecondaryAsset.human_attribute_name :av %>',
+      name: 'd',
+      width: 80,
+      editable: true
+    },
+    {
+      label: '<%= SecondaryAsset.human_attribute_name :i %>',
+      name: 'i',
+      width: 80,
+      editable: true
+    },
+    {
+      label: '<%= SecondaryAsset.human_attribute_name :c %>',
+      name: 'c',
+      width: 80,
+      editable: true
+    },
+    {
+      label: '<%= SecondaryAsset.human_attribute_name :au %>',
+      name: 't',
+      width: 80,
+      editable: true
+    }
+  ],
+    sortname: 'name',
+    sortorder : 'asc',
+    loadonce: true,
+    viewrecords: true,
+    width: 780,
+    height: 200,
+    rowNum: 10,
+    pager: "#jqGridPager",
+    subGrid: true,
+    subGridRowExpanded: function(subgrid_id, row_id) {
+      var subgrid_table_id, pager_id;
+      var sa_id;
+      subgrid_table_id = subgrid_id+"_t";
+      pager_id = "p_"+subgrid_table_id;
+      sa_id = $("#jqGrid").getRowData(row_id);
+      $("#"+subgrid_id).html("<table id='"+subgrid_table_id+"' class='scroll'></table><div id='"+pager_id+"' class='scroll'></div>");
+      jQuery("#"+subgrid_table_id).jqGrid({
+	url: 'secondary_assets/'+sa_id.id+'/primary_assets.json',
+	colModel: [
+      {
+	name: 'id',
+	hidden: true,
+	key: true,
+	editrules : { required: true}
+      },
+	{
+	  label: '<%= PrimaryAsset.human_attribute_name :name %>',
+	name: 'name',
+	width: 75,
+	key: true,
+	editable: true,
+	editrules : { required: true}
+	},
+	{
+	  label: '<%= PrimaryAsset.human_attribute_name :description %>',
+	name: 'description',
+	width: 140,
+	editable: true // must set editable to true if you want to make the field editable
+	},
+	{
+	  label: '<%= PrimaryAsset.human_attribute_name :av %>',
+	  name: 'd',
+	  width: 80,
+	  editable: true
+	},
+	{
+	  label: '<%= PrimaryAsset.human_attribute_name :i %>',
+	  name: 'i',
+	  width: 80,
+	  editable: true
+	},
+	{
+	  label: '<%= PrimaryAsset.human_attribute_name :c %>',
+	  name: 'c',
+	  width: 80,
+	  editable: true
+	},
+	{
+	  label: '<%= PrimaryAsset.human_attribute_name :au %>',
+	  name: 't',
+	  width: 80,
+	  editable: true
+	}]
+      });
+    }
+  });
+
+  //$("#jqGrid").jqGrid('editRow',rowid, 
+  // { 
+  //keys : true, 
+  //oneditfunc: function() {
+  //alert ("edited"); 
+  //}
+  //});
+
+
+  $.extend($.jgrid.defaults, {
+    ajaxGridOptions: { contentType: "application/json" },
+    ajaxRowOptions: { contentType: "application/json", async: true },
+    ajaxSelectOptions: { contentType: "application/json", dataType: "JSON" }
+  });
+
+  $.extend($.jgrid.edit, {
+    ajaxEditOptions: { contentType: "application/json" }});
+
+  $('#jqGrid').navGrid('#jqGridPager',
+      // the buttons to appear on the toolbar of the grid
+      { edit: true, add: true, del: true, search: false, refresh: false, view: false, position: "left", cloneToTop: false },
+      // options for the Edit Dialog
+      {
+	closeAfterEdit: true,
+    afterSubmit:function(){ $(this).jqGrid("setGridParam", {datatype:'json'}); return [true];},
+    mtype: "PUT",
+    editCaption: "The Edit Dialog",
+    url: 'secondary_assets',
+    onclickSubmit: function (params, postdata) {
+      params.url += '/' + encodeURIComponent(postdata.jqGrid_id) + '.json';
+    },
+    serializeEditData: function(postdata) {
+      return (JSON.stringify({secondary_asset: {name: postdata.name, description: postdata.description, d: postdata.d, i: postdata.i, c: postdata.c, t: postdata.t}}));
+    },
+    template: template,
+    errorTextFormat: function (data) {
+      return 'Error: ' + data.responseText
+    }
+      },
+      // options for the Add Dialog
+      {
+	template: template,
+	errorTextFormat: function (data) {
+	  return 'Error: ' + data.responseText
+	},
+	afterSubmit:function(){ $(this).jqGrid("setGridParam", {datatype:'json'}); return [true];},
+	closeAfterAdd: true,
+	serializeEditData: function(postdata) {
+	  return (JSON.stringify({secondary_asset: {name: postdata.name, description: postdata.description, d: postdata.d, i: postdata.i, c: postdata.c, t: postdata.t}}));
+	},
+
+      },
+      // options for the Delete Dailog
+      {
+	mtype: "DELETE",
+	url: 'secondary_assets/destroy_multiple.json',
+	errorTextFormat: function (data) {
+	  return 'Error: ' + data.responseText
+	}
+      });
+});
+

@@ -35,11 +35,11 @@ url: 'secondary_assets',
 // we set the changes to be made at client side using predefined word clientArray
 //multiselect: true,
 onSelectRow: function(id){
-  if(id && id!==lastSel){ 
-    $('#jqGrid').restoreRow(lastSel); 
-    lastSel=id; 
-  }
-  $('#jqGrid').editRow(id, true); 
+if(id && id!==lastSel){ 
+$('#jqGrid').restoreRow(lastSel); 
+lastSel=id; 
+}
+$('#jqGrid').editRow(id, true); 
 },
 multikey: "shiftkey",
 editurl: 'secondary_assets',
@@ -68,7 +68,7 @@ label: '<%= SecondaryAsset.human_attribute_name :description %>',
 {
 label: '<%= SecondaryAsset.human_attribute_name :av %>',
        name: 'd',
-       width: 100,
+       width: 80,
        editable: true
 },
 {
@@ -80,13 +80,13 @@ label: '<%= SecondaryAsset.human_attribute_name :i %>',
 {
 label: '<%= SecondaryAsset.human_attribute_name :c %>',
        name: 'c',
-       width: 140,
+       width: 80,
        editable: true
 },
 {
 label: '<%= SecondaryAsset.human_attribute_name :au %>',
        name: 't',
-       width: 140,
+       width: 80,
        editable: true
 }
 ],
@@ -97,8 +97,66 @@ label: '<%= SecondaryAsset.human_attribute_name :au %>',
   width: 780,
   height: 200,
   rowNum: 10,
-  pager: "#jqGridPager"
-  });
+  pager: "#jqGridPager",
+  subGrid: true,
+  subGridRowExpanded: function(subgrid_id, row_id) {
+    var subgrid_table_id, pager_id;
+    var sa_id;
+    subgrid_table_id = subgrid_id+"_t";
+    pager_id = "p_"+subgrid_table_id;
+    sa_id = $("#jqGrid").getRowData(row_id);
+    $("#"+subgrid_id).html("<table id='"+subgrid_table_id+"' class='scroll'></table><div id='"+pager_id+"' class='scroll'></div>");
+    jQuery("#"+subgrid_table_id).jqGrid({
+url: 'secondary_assets/'+sa_id.id+'/primary_assets.json',
+colModel: [
+{
+name: 'id',
+hidden: true,
+key: true,
+editrules : { required: true}
+},
+{
+label: '<%= PrimaryAsset.human_attribute_name :name %>',
+name: 'name',
+width: 75,
+key: true,
+editable: true,
+editrules : { required: true}
+},
+{
+label: '<%= PrimaryAsset.human_attribute_name :description %>',
+name: 'description',
+width: 140,
+editable: true // must set editable to true if you want to make the field editable
+},
+{
+label: '<%= PrimaryAsset.human_attribute_name :av %>',
+       name: 'd',
+       width: 80,
+       editable: true
+},
+{
+label: '<%= PrimaryAsset.human_attribute_name :i %>',
+       name: 'i',
+       width: 80,
+       editable: true
+},
+{
+label: '<%= PrimaryAsset.human_attribute_name :c %>',
+       name: 'c',
+       width: 80,
+       editable: true
+},
+{
+label: '<%= PrimaryAsset.human_attribute_name :au %>',
+       name: 't',
+       width: 80,
+       editable: true
+}]
+
+});
+}
+});
 
 //$("#jqGrid").jqGrid('editRow',rowid, 
 // { 

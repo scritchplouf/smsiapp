@@ -1,0 +1,2 @@
+module PrimaryAssetsHelper
+end
